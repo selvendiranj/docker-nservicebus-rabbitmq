@@ -1,0 +1,52 @@
+version: "3"
+services:   
+    sender:
+        image: sender
+        build:
+            context: ./Sender/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+    receiver:
+        image: receiver
+        build:
+            context: ./Receiver/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+    clientui:
+        image: clientui
+        build:
+            context: ./ClientUI/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+    sales:
+        image: sales
+        build:
+            context: ./Sales/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+    billing:
+        image: billing
+        build:
+            context: ./Billing/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+    shipping:
+        image: shipping
+        build:
+            context: ./Shipping/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        ports:
+            - "15672:15672"
+        healthcheck:
+            test: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+            interval: 10s
+            retries: 5

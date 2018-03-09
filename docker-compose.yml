@@ -1,0 +1,46 @@
+version: "3"
+services:   
+    clientui:
+        image: clientui
+        build:
+            context: ./ClientUI/
+            dockerfile: Dockerfile
+        depends_on:
+            - sales
+            - rabbitmq
+        command: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+    sales:
+        image: sales
+        build:
+            context: ./Sales/
+            dockerfile: Dockerfile
+        depends_on:
+            - billing
+            - shipping
+            - rabbitmq
+        command: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+    billing:
+        image: billing
+        build:
+            context: ./Billing/
+            dockerfile: Dockerfile
+        depends_on:
+            - shipping
+            - rabbitmq
+        command: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+    shipping:
+        image: shipping
+        build:
+            context: ./Shipping/
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+        command: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        ports:
+            - "15672:15672"
+        healthcheck:
+            test: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+            interval: 10s
+            retries: 5
