@@ -3,7 +3,7 @@ services:
     clientui:
         image: clientui
         build:
-            context: ./ClientUI/
+            context: ./Client.GUI/
             dockerfile: Dockerfile
         depends_on:
             - sales

@@ -3,11 +3,14 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+        <UserSecretsId>525ef7ac-d6e5-4375-b72f-65a6f9dc22aa</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="NServiceBus" Version="7.1.10" />
         <PackageReference Include="NServiceBus.Heartbeat" Version="3.0.1" />
