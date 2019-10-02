@@ -1,10 +1,8 @@
-﻿using Messages;
+﻿using System;
+using System.Threading.Tasks;
+using Messages;
 using NServiceBus;
 using NServiceBus.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sales
 {
@@ -15,25 +13,33 @@ namespace Sales
 
         public Task Handle(PlaceOrder message, IMessageHandlerContext context)
         {
-            OrderPlaced orderPlaced;
-
             log.Info($"Received PlaceOrder, OrderId = {message.OrderId}");
-
-            //return Task.CompletedTask;
 
             // This is normally where some business logic would occur
 
-            // throw new Exception("BOOM");
-            // example to explain retries
+            #region ThrowTransientException
+
+            // Uncomment to test throwing transient exceptions
             //if (random.Next(0, 5) == 0)
             //{
             //    throw new Exception("Oops");
             //}
 
-            orderPlaced = new OrderPlaced
+            #endregion
+
+            #region ThrowFatalException
+
+            // Uncomment to test throwing fatal exceptions
+            //throw new Exception("BOOM");
+
+            #endregion
+
+            var orderPlaced = new OrderPlaced
             {
                 OrderId = message.OrderId
             };
+
+            log.Info($"Publishing OrderPlaced, OrderId = {message.OrderId}");
 
             return context.Publish(orderPlaced);
         }

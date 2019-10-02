@@ -7,41 +7,44 @@ namespace Shipping
 {
     public class Program
     {
-        static AutoResetEvent closingEvent = new AutoResetEvent(false);
-
         /// <summary>
         /// Main async method to start, listen and stop endpoint
         /// </summary>
         /// <returns></returns>
         static async Task Main()
         {
-            EndpointConfiguration endptConf;
-            TransportExtensions<RabbitMQTransport> transport;
-            IEndpointInstance endptInst;
-            string endptName = "Retail.Docker.Shipping";
-            string rabbitmqh = "host=rabbitmq;RequestedHeartbeat=600";
+            EndpointConfiguration endpointConfig;
+            IEndpointInstance endpointIns;
 
-            Console.CancelKeyPress += OnExit;
-            Console.Title = endptName;
+            Console.Title = "Shipping";
 
-            endptConf = new EndpointConfiguration(endptName);
-            transport = endptConf.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(rabbitmqh);
-            transport.UseConventionalRoutingTopology();
-            endptConf.EnableInstallers();
+            string endpointName = "Shipping";
+            string rabbitmqhost = "host=rabbitmq;RequestedHeartbeat=600";
+            string errorQueue = "error";
+            string auditQueue = "audit";
+            string serviceControlQueue = "Particular.ServiceControl";
+            string serviceControlMetricsAddress = "Particular.Monitoring";
 
-            await Task.Delay(10000); // wait for RabbitMQ to come up
-            endptInst = await Endpoint.Start(endptConf).ConfigureAwait(false);
+            endpointConfig = new EndpointConfiguration(endpointName);
+            endpointConfig.UseTransport<RabbitMQTransport>()
+                          .ConnectionString(rabbitmqhost)
+                          .UseConventionalRoutingTopology();
+            endpointConfig.EnableInstallers();
 
-            // Wait until the message arrives.
-            closingEvent.WaitOne();
+            endpointConfig.SendFailedMessagesTo(errorQueue);
+            endpointConfig.AuditProcessedMessagesTo(auditQueue);
+            endpointConfig.SendHeartbeatTo(serviceControlQueue);
 
-            await endptInst.Stop().ConfigureAwait(false);
-        }
+            var metrics = endpointConfig.EnableMetrics();
+            metrics.SendMetricDataToServiceControl(serviceControlMetricsAddress, TimeSpan.FromMilliseconds(500));
 
-        static void OnExit(object sender, ConsoleCancelEventArgs args)
-        {
-            closingEvent.Set();
+            await Task.Delay(5000); // wait for RabbitMQ to come up
+            endpointIns = await Endpoint.Start(endpointConfig).ConfigureAwait(false);
+
+            Console.WriteLine("Press Enter to exit.");
+            Console.ReadLine();
+
+            await endpointIns.Stop().ConfigureAwait(false);
         }
     }
 }

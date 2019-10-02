@@ -1,10 +1,7 @@
-﻿using Messages;
+﻿using System.Threading.Tasks;
+using Messages;
 using NServiceBus;
 using NServiceBus.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Billing
 {
@@ -14,16 +11,16 @@ namespace Billing
 
         public Task Handle(OrderPlaced message, IMessageHandlerContext context)
         {
-            OrderBilled orderBilled;
+            log.Info($"Billing has received OrderPlaced, OrderId = {message.OrderId}");
 
-            log.Info($"Received OrderPlaced, OrderId = {message.OrderId} - Charging credit card...");
-
-            orderBilled = new OrderBilled
+            var orderBilled = new OrderBilled
             {
                 OrderId = message.OrderId
             };
 
             return context.Publish(orderBilled);
+
+            return Task.CompletedTask;
         }
     }
 }
