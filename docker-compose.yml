@@ -3,8 +3,8 @@ services:
     clientui:
         image: clientui
         build:
-            context: ./Client.GUI/
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./Client.GUI/Dockerfile
         depends_on:
             - sales
             - rabbitmq
@@ -12,8 +12,8 @@ services:
     sales:
         image: sales
         build:
-            context: ./Sales/
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./Sales/Dockerfile
         depends_on:
             - billing
             - shipping
@@ -22,8 +22,8 @@ services:
     billing:
         image: billing
         build:
-            context: ./Billing/
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./Billing/Dockerfile
         depends_on:
             - shipping
             - rabbitmq
@@ -31,8 +31,8 @@ services:
     shipping:
         image: shipping
         build:
-            context: ./Shipping/
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./Shipping/Dockerfile
         depends_on:
             - rabbitmq
         command: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
