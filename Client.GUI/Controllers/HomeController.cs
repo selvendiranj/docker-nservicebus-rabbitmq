@@ -36,7 +36,7 @@ namespace Client.GUI.Controllers
             var command = new PlaceOrder { OrderId = orderId };
 
             // Send the command
-            await _endpointInstance.Send(command).ConfigureAwait(false);
+            await _endpointInstance.Send("Sales", command).ConfigureAwait(false);
 
             dynamic model = new ExpandoObject();
             model.OrderId = orderId;
