@@ -22,7 +22,7 @@ namespace Shipping
             string rabbitmqhost = "host=rabbitmq;RequestedHeartbeat=600";
             string errorQueue = "error";
             string auditQueue = "audit";
-            string serviceControlQueue = "Particular.ServiceControl";
+            string serviceControlQueue = "Particular.Servicecontrol";
             string serviceControlMetricsAddress = "Particular.Monitoring";
 
             endpointConfig = new EndpointConfiguration(endpointName);
